@@ -23,7 +23,7 @@ export async function getLinks(): Promise<Either<never, GetLinksOutput>> {
       createdAt: schema.links.createdAt,
     })
     .from(schema.links)
-    .orderBy(desc(schema.links.id))
+    .orderBy(desc(schema.links.createdAt), desc(schema.links.id))
 
   return makeRight({ links })
 }
