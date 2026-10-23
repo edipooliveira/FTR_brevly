@@ -1,4 +1,9 @@
 import { env } from '@/env'
+import { createLinkRoute } from '@/infra/http/routes/create-link'
+import { deleteLinkRoute } from '@/infra/http/routes/delete-link'
+import { getLinkByShortUrlRoute } from '@/infra/http/routes/get-link-by-short-url'
+import { getLinksRoute } from '@/infra/http/routes/get-links'
+import { incrementLinkAccessRoute } from '@/infra/http/routes/increment-link-access'
 import { transformSwaggerSchema } from '@/infra/http/transform-swagger-schema'
 import { fastifyCors } from '@fastify/cors'
 import { fastifySwagger } from '@fastify/swagger'
@@ -45,6 +50,12 @@ server.register(fastifySwagger, {
 server.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 })
+
+server.register(createLinkRoute)
+server.register(getLinksRoute)
+server.register(getLinkByShortUrlRoute)
+server.register(deleteLinkRoute)
+server.register(incrementLinkAccessRoute)
 
 server.listen({ port: env.PORT, host: '0.0.0.0' }).then(() => {
   console.log('HTTP Server running!')
