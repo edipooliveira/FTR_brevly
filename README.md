@@ -29,6 +29,33 @@ Projeto do desafio da Rocketseat, com API em Fastify + PostgreSQL e SPA em React
 
 > TODO: preencher na etapa final (variáveis de ambiente, banco, migrations, server e web).
 
+### Configuração do Cloudflare R2
+
+Os relatórios CSV são enviados para um bucket R2 com acesso público. No painel da Cloudflare:
+
+1. Crie o bucket e habilite o acesso público (domínio `r2.dev` ou domínio próprio).
+2. Gere um API token com permissão de leitura e escrita no bucket.
+3. Preencha no `server/.env`: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ACCESS_KEY_ID`, `CLOUDFLARE_SECRET_ACCESS_KEY`, `CLOUDFLARE_BUCKET` e `CLOUDFLARE_PUBLIC_URL` (URL pública do bucket).
+4. Configure o CORS do bucket (R2 → bucket → Settings → CORS Policy) para o front baixar o CSV. O Vite roda fixo na porta `5175` (`strictPort`); a `5173` (padrão do Vite) fica na política para quem rodar o front em outra máquina com a porta padrão. Em produção, adicione a URL pública do front em `AllowedOrigins`.
+
+```json
+[
+  {
+    "AllowedOrigins": ["http://localhost:5175", "http://localhost:5173"],
+    "AllowedMethods": ["GET"]
+  }
+]
+```
+
+No `web/.env`, a URL do front usa a mesma porta:
+
+```bash
+VITE_FRONTEND_URL=http://localhost:5175
+VITE_BACKEND_URL=http://localhost:3333
+```
+
+Sem essa política o download via `fetch` é bloqueado pelo navegador e o front abre o CSV em uma nova aba como alternativa.
+
 ### Server com Docker
 
 Na pasta `server/`, copie o `.env.example` para `.env` e preencha as variáveis. O `docker compose` usa as variáveis `POSTGRES_*` para subir o banco e monta o `DATABASE_URL` do container `app` apontando para o serviço `db`.
