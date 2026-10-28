@@ -6,7 +6,8 @@ export function useDeleteLink() {
 
   return useMutation({
     mutationFn: deleteLink,
-    onSuccess() {
+    // Also refetch on error: a 404 means the link is already gone and should leave the list.
+    onSettled() {
       return queryClient.invalidateQueries({ queryKey: ["links"] });
     },
   });

@@ -34,7 +34,7 @@ export function Redirect() {
 
   return (
     <main className="flex min-h-dvh items-center justify-center px-3">
-      <Card className="flex max-w-[580px] flex-col items-center gap-6 px-5 py-12 text-center md:px-12 md:py-16">
+      <Card className="flex max-w-[580px] flex-col items-center gap-6 px-6 py-12 text-center md:px-12 md:py-16">
         <Logo variant="icon" />
 
         <h1 className="text-xl font-bold text-gray-600">Redirecionando...</h1>

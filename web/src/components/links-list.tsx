@@ -12,7 +12,11 @@ import { Card } from "./ui/card";
 
 export function LinksList() {
   const { data: links, isLoading, isError } = useLinks();
-  const { mutate: exportLinks, isPending: isExporting } = useExportLinks();
+  const {
+    mutate: exportLinks,
+    isPending: isExporting,
+    isError: hasExportFailed,
+  } = useExportLinks();
 
   const isLinksListEmpty = !links || links.length === 0;
 
@@ -39,6 +43,16 @@ export function LinksList() {
         </Button>
       </div>
 
+      {hasExportFailed && (
+        <p
+          role="alert"
+          className="flex items-center gap-2 text-sm text-gray-500"
+        >
+          <WarningIcon className="size-4 shrink-0 text-danger" />
+          Não foi possível baixar o CSV. Tente novamente.
+        </p>
+      )}
+
       <div className="border-t border-gray-200">
         {isLoading ? (
           <div className="flex flex-col items-center gap-3 pb-6 pt-4">
@@ -47,7 +61,7 @@ export function LinksList() {
               Carregando links...
             </span>
           </div>
-        ) : isError ? (
+        ) : isError && !links ? (
           <div className="flex flex-col items-center gap-3 pb-6 pt-4">
             <WarningIcon className="size-8 text-danger" />
             <span className="text-xs uppercase text-gray-500">

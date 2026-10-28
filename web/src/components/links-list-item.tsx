@@ -17,7 +17,11 @@ interface LinksListItemProps {
 }
 
 export function LinksListItem({ link }: LinksListItemProps) {
-  const { mutate: deleteLink, isPending: isDeleting } = useDeleteLink();
+  const {
+    mutate: deleteLink,
+    isPending: isDeleting,
+    isError: hasDeleteFailed,
+  } = useDeleteLink();
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
 
   const shortLink = `${env.VITE_FRONTEND_URL}/${link.shortUrl}`;
@@ -57,7 +61,7 @@ export function LinksListItem({ link }: LinksListItemProps) {
   }
 
   return (
-    <li className="flex items-center gap-4 py-4 md:gap-5">
+    <li className="flex flex-wrap items-center gap-x-4 gap-y-2 py-4 md:gap-x-5">
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <a
           href={shortLink}
@@ -76,7 +80,7 @@ export function LinksListItem({ link }: LinksListItemProps) {
         {link.accessCount} {link.accessCount === 1 ? "acesso" : "acessos"}
       </span>
 
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-2 md:gap-1">
         <IconButton
           type="button"
           onClick={handleCopyLink}
@@ -102,6 +106,16 @@ export function LinksListItem({ link }: LinksListItemProps) {
           <TrashIcon />
         </IconButton>
       </div>
+
+      {hasDeleteFailed && (
+        <p
+          role="alert"
+          className="flex basis-full items-center gap-2 text-sm text-gray-500"
+        >
+          <WarningIcon className="size-4 shrink-0 text-danger" />
+          Não foi possível apagar o link. Tente novamente.
+        </p>
+      )}
     </li>
   );
 }

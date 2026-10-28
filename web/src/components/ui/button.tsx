@@ -11,7 +11,7 @@ const buttonVariants = tv({
       primary:
         "h-12 w-full px-5 gap-3 rounded-lg bg-blue-base text-md text-white hover:bg-blue-dark focus-visible:bg-blue-dark",
       secondary:
-        "h-8 px-2 gap-1.5 rounded border border-transparent bg-gray-200 text-sm text-gray-500 hover:border-blue-base focus-visible:border-blue-base [&_svg]:size-4 [&_svg]:text-gray-600",
+        "relative h-8 px-2 gap-1.5 rounded after:absolute after:inset-x-0 after:-inset-y-1.5 border border-transparent bg-gray-200 text-sm text-gray-500 hover:border-blue-base focus-visible:border-blue-base [&_svg]:size-4 [&_svg]:text-gray-600",
     },
     isLoading: {
       true: "opacity-50 pointer-events-none",

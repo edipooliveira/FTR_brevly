@@ -7,7 +7,9 @@ const iconButtonVariants = tv({
 
   variants: {
     size: {
-      default: "size-8 [&_svg]:size-4",
+      // The ::after expands the touch area to 44px tall without changing the 32px look.
+      default:
+        "relative size-8 after:absolute after:-inset-x-1 after:-inset-y-1.5 md:after:-inset-x-0.5 [&_svg]:size-4",
     },
   },
 
