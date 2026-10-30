@@ -7,14 +7,22 @@ import { describe, expect, it, vi } from 'vitest'
 
 describe('export links', () => {
   it('should be able to export links', async () => {
-    const uploadStub = vi
-      .spyOn(upload, 'uploadFileToStorage')
-      .mockImplementationOnce(async () => {
+    const chunks: Buffer[] = []
+
+    vi.spyOn(upload, 'uploadFileToStorage').mockImplementationOnce(
+      // reads while the CSV is generated, like the real upload: an unread
+      // stream stalls the export once the test database grows
+      async ({ contentStream }) => {
+        for await (const chunk of contentStream) {
+          chunks.push(chunk)
+        }
+
         return {
           key: `${randomUUID()}.csv`,
           url: 'http://example.com/file.csv',
         }
-      })
+      }
+    )
 
     const link1 = await makeLink()
     const link2 = await makeLink()
@@ -24,24 +32,8 @@ describe('export links', () => {
 
     const sut = await exportLinks()
 
-    const generatedCSVStream = uploadStub.mock.calls[0][0].contentStream
-    const csvAsString = await new Promise<string>((resolve, reject) => {
-      const chunks: Buffer[] = []
-
-      generatedCSVStream.on('data', (chunk: Buffer) => {
-        chunks.push(chunk)
-      })
-
-      generatedCSVStream.on('end', () => {
-        resolve(Buffer.concat(chunks).toString('utf-8'))
-      })
-
-      generatedCSVStream.on('error', err => {
-        reject(err)
-      })
-    })
-
-    const csvAsArray = csvAsString
+    const csvAsArray = Buffer.concat(chunks)
+      .toString('utf-8')
       .trim()
       .split('\n')
       .map(row => row.split(','))

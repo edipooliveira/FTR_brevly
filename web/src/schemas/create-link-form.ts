@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 export const createLinkFormSchema = z.object({
-  originalUrl: z.string().url("Informe uma url válida."),
+  originalUrl: z
+    .string()
+    .url("Informe uma url válida.")
+    .regex(/^https?:\/\//i, "Informe uma url válida."),
   shortUrl: z
     .string()
     .regex(

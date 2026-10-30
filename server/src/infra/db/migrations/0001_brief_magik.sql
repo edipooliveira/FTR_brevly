@@ -1,0 +1,1 @@
+CREATE INDEX "links_created_at_id_idx" ON "links" USING btree ("created_at","id");

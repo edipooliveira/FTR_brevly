@@ -11,7 +11,10 @@ export const createLinkRoute: FastifyPluginAsyncZod = async server => {
         summary: 'Create a link',
         tags: ['links'],
         body: z.object({
-          originalUrl: z.string().url(),
+          originalUrl: z
+            .string()
+            .url()
+            .regex(/^https?:\/\//i),
           shortUrl: z.string().regex(/^[a-z0-9-]{3,32}$/),
         }),
         response: {

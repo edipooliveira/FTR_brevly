@@ -44,6 +44,21 @@ describe('create link', () => {
     ).rejects.toBeInstanceOf(ZodError)
   })
 
+  it.each([
+    'javascript:alert(1)',
+    ' javascript:alert(1)',
+    'java\tscript:alert(1)',
+    'data:text/html,<script>alert(1)</script>',
+    'ftp://example.com',
+  ])('should not be able to create a link to %j', async originalUrl => {
+    await expect(
+      createLink({
+        originalUrl,
+        shortUrl: `link-${randomUUID().slice(0, 8)}`,
+      })
+    ).rejects.toBeInstanceOf(ZodError)
+  })
+
   it('should not be able to create a link with a duplicated short url', async () => {
     const link = await makeLink()
 
@@ -54,5 +69,17 @@ describe('create link', () => {
 
     expect(isLeft(sut)).toBe(true)
     expect(unwrapEither(sut)).toBeInstanceOf(ShortUrlAlreadyExistsError)
+  })
+
+  it('should create only one link when the same short url is sent concurrently', async () => {
+    const shortUrl = `link-${randomUUID().slice(0, 8)}`
+    const input = { originalUrl: 'https://example.com', shortUrl }
+
+    const results = await Promise.all(
+      Array.from({ length: 20 }, () => createLink(input))
+    )
+
+    expect(results.filter(isRight)).toHaveLength(1)
+    expect(results.filter(isLeft)).toHaveLength(19)
   })
 })
